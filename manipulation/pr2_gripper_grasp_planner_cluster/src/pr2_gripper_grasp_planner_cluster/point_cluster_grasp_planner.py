@@ -764,7 +764,7 @@ class PointClusterGraspPlanner:
         grasp_poses = []
         cluster_to_object_frame = self.object_to_cluster_frame**-1
         for grasp in grasps:
-            pose_mat = pose_to_mat(grasp.grasp_pose)
+            pose_mat = pose_to_mat(grasp.grasp_pose.pose)
 
             #transform them to gripper model poses in object frame
             obj_frame_mat = cluster_to_object_frame * pose_mat * self.model_frame_in_actual_wrist_frame

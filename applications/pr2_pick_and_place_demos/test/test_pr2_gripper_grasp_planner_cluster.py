@@ -12,8 +12,8 @@ import rospy
 import actionlib
 from object_manipulation_msgs.srv import FindClusterBoundingBox, FindClusterBoundingBoxRequest
 from tabletop_object_detector.srv import TabletopDetection, TabletopDetectionRequest
-from object_manipulation_msgs.srv import GraspPlanning, GraspPlanningRequest
-from object_manipulation_msgs.msg import GraspPlanningAction, GraspPlanningGoal
+from manipulation_msgs.srv import GraspPlanning, GraspPlanningRequest
+from manipulation_msgs.msg import GraspPlanningAction, GraspPlanningGoal
 from pr2_gripper_grasp_planner_cluster.srv import SetPointClusterGraspParams, SetPointClusterGraspParamsRequest
 from visualization_msgs.msg import Marker
 import tf.transformations
@@ -134,7 +134,7 @@ def call_evaluate_point_cluster_grasps(cluster, grasps):
     if res.error_code.value != 0:
         return []
     
-    probs = [grasp.success_probability for grasp in res.grasps]
+    probs = [grasp.grasp_quality for grasp in res.grasps]
     return probs
 
 
@@ -205,12 +205,12 @@ if __name__ == "__main__":
                 #pregrasp_poses = [grasp.pre_grasp_pose for grasp in grasps]
 
                 #print the returned success probs
-                original_probs = [grasp.success_probability for grasp in grasps]
+                original_probs = [grasp.grasp_quality for grasp in grasps]
                 print "original probs:", pplist(original_probs)
 
                 #zero out the original success probabilities
                 for grasp in grasps:
-                    grasp.success_probability = 0
+                    grasp.grasp_quality = 0
                 raw_input('press enter to evalute returned grasps')
 
                 #ask the grasp planner to evaluate the grasps
@@ -222,12 +222,16 @@ if __name__ == "__main__":
                 print "number of grasps returned:", len(grasps)
                 print "drawing grasps: press p to pause after each one in turn, enter to show all grasps at once"
                 c = raw_input()
+                grasp_poses_not_stamped = []
+                for pose_stamped in grasp_poses:
+                    grasp_poses_not_stamped.append(pose_stamped.pose)
                 if c == 'p':
                     #for (pregrasp_pose, grasp_pose) in zip(pregrasp_poses, grasp_poses):
                     #    draw_functions.draw_grasps([pregrasp_pose, grasp_pose], cluster.header.frame_id, pause = 1)
-                    draw_functions.draw_grasps(grasp_poses, cluster.header.frame_id, pause = 1)
+                    
+                    draw_functions.draw_grasps(grasp_poses_not_stamped, cluster.header.frame_id, pause = 1)
                 else:
-                    draw_functions.draw_grasps(grasp_poses, cluster.header.frame_id, pause = 0)
+                    draw_functions.draw_grasps(grasp_poses_not_stamped, cluster.header.frame_id, pause = 0)
                 print "done drawing grasps, press enter to continue"
                 raw_input()
 

@@ -115,7 +115,7 @@ class PointClusterGraspPlannerServer:
 
         #return the same grasps with the qualities added
         for (grasp, prob) in zip(req.grasps_to_evaluate, probs):
-            grasp.success_probability = prob
+            grasp.grasp_quality = prob
 
         #fill in the response
         resp = GraspPlanningResponse()
