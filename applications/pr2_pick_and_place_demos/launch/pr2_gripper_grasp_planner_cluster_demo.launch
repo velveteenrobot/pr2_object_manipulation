@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="object_manipulator" name="cluster_bounding_box_finder_server" type="cluster_bounding_box_finder_server.py" />
+    <include file="$(find pr2_gripper_grasp_planner_cluster)/launch/pr2_gripper_grasp_planner_cluster_server.launch"/>
+    <node pkg="pr2_pick_and_place_demos" name="test_pr2_gripper_grasp_planner_cluster" type="test_pr2_gripper_grasp_planner_cluster.py" output="screen" />
+
+</launch>
+
